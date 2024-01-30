@@ -1,4 +1,4 @@
-#Bioinformatic analysis record for oyster population genomics
+**Bioinformatic analysis record for oyster population genomics**
 
 Teng Wen 30/01/2024
 
