@@ -1,4 +1,4 @@
-1. Genome size estimation with Illumina 150bp PE reads
+**1. Genome size estimation with Illumina 150bp PE reads**
 
 Data trimming (All Illumina 150bp PE reads used in the following analysis were trimmed with this criteria)
 ```
