@@ -31,7 +31,7 @@ done
 **3. SNP calling and filtering**
 
 ```bash
-bcftools mpileup --threads 10 -a AD,DP,SP -Ou -f ref.fa *.dup.bam | bcftools call --threads 10 -f GQ,GP -mO z -o oyster.vcf.gz
+bcftools mpileup --threads 10 -a AD,DP,SP -Ou -f ref.fa *.bam | bcftools call --threads 10 -f GQ,GP -mO z -o oyster.vcf.gz
 VCF_IN=oyster.vcf.gz
 VCF_OUT=oyster.filtered.vcf.gz
 MAF=0.1
