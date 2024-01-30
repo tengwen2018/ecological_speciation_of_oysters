@@ -45,7 +45,7 @@ vcftools --gzvcf $VCF_IN \
 --minDP $MIN_DEPTH --maxDP $MAX_DEPTH --recode --stdout | gzip -c > $VCF_OUT
 ```
 
-**4. Estimation of per-site FST and sliding-window *F*<sup>ST</sup>**
+**4. Estimation of per-site FST and sliding-window *F*<sub>ST</sub>**
 
 ```bash
 # filter individuals with missingness above 20%
