@@ -1,4 +1,4 @@
-**Bioinformatic analysis record for oyster speciation analysis**
+**Bioinformatic analysis record for study of oyster speciation**
 
 Teng Wen 30/01/2024
 
