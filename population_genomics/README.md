@@ -45,18 +45,13 @@ vcftools --gzvcf $VCF_IN \
 --minDP $MIN_DEPTH --maxDP $MAX_DEPTH --recode --stdout | gzip -c > $VCF_OUT
 ```
 
-**4. Estimation of per-site FST and sliding-window *F*<sub>ST</sub>**
+**4. Estimation of sliding-window *F*<sub>ST</sub>**
 
 ```bash
 # filter individuals with missingness above 20%
 vcftools --gzvcf oyster.filtered.vcf.gz --missing-indv
 sed '1d' out.imiss | awk '{if($5>0.2)print $1}' > lowDP.indv
 vcftools --gzvcf oyster.filtered.vcf.gz --remove lowDP.indv --recode --stdout | gzip -c > filterlowDP.vcf.gz
-# per site fst
-time vcftools --gzvcf filterlowDP.vcf.gz \
---weir-fst-pop cang \
---weir-fst-pop cgig \
---out ./cang.vs.cgig
 # sliding windows of 2kb
 parseVCF.py -i filterlowDP.vcf.gz | bgzip > filterlowDP.geno.gz
 popgenWindows.py -g filterlowDP.geno.gz -o filterlowDP.2k.Fst.Dxy.pi.csv.gz \
