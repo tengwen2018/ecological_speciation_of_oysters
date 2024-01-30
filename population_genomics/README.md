@@ -29,3 +29,18 @@ done
 ```
 
 **3. SNP calling and filtering**
+
+```bash
+bcftools mpileup --threads 10 -a AD,DP,SP -Ou -f ref.fa *.dup.bam | bcftools call --threads 10 -f GQ,GP -mO z -o oyster.vcf.gz
+VCF_IN=oyster.vcf.gz
+VCF_OUT=oyster.filtered.vcf.gz
+MAF=0.1
+MISS=0.8
+QUAL=30
+MIN_DEPTH=10
+MAX_DEPTH=50
+vcftools --gzvcf $VCF_IN \
+--remove-indels --maf $MAF --max-missing $MISS --minQ $QUAL \
+--min-meanDP $MIN_DEPTH --max-meanDP $MAX_DEPTH \
+--minDP $MIN_DEPTH --maxDP $MAX_DEPTH --recode --stdout | gzip -c > $VCF_OUT
+```
