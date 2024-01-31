@@ -60,7 +60,7 @@ popgenWindows.py -g filterlowDP.geno.gz -o filterlowDP.2k.Fst.Dxy.pi.csv.gz \
    --popsFile pop.info
 ```
 
-**5. Structural variation utilizing Delly**
+**5. Structural variation analysis**
 
 ```bash
 for i in `cat sample.list`
