@@ -59,3 +59,26 @@ popgenWindows.py -g filterlowDP.geno.gz -o filterlowDP.2k.Fst.Dxy.pi.csv.gz \
    -p cang -p cgig \
    --popsFile pop.info
 ```
+
+**5. Structural variation utilizing Delly**
+
+```bash
+for i in `cat sample.list`
+do
+delly call -o delly.bcf -g ref.fa $i.bam
+done
+
+delly merge -o sites.bcf *.bcf
+
+# Genotype this merged SV site list across all samples.
+for i in `cat sample.list`
+do
+delly call -g ref.fa -v sites.bcf -o geno.bcf $i.bam
+done
+
+bcftools merge -m id -O b -o merged.bcf *.geno.bcf
+
+#Apply the germline SV filter which requires at least 20 unrelated samples
+bcftools index merged.bcf
+delly filter -f germline -o germline.bcf merged.bcf
+```
