@@ -80,11 +80,11 @@ write.table(res, "cang0h.vs.cang24h.result", quote=F, sep="\t")
 ```bash
 library(clusterProfiler)
 
-#加载背景库文件，即我们的第二个文件
+#加载背景库文件
 go_anno <- read.delim('gene2go.txt', header=FALSE, stringsAsFactors =FALSE)
 names(go_anno) <- c('gene_id','ID')
 
-#加载GO注释描述，即我们的第三个文件
+#加载GO注释描述
 go_class <- read.delim('go-basic.txt', header=FALSE, stringsAsFactors =FALSE)
 names(go_class) <- c('ID','Description','Ontology')
 
@@ -104,8 +104,7 @@ go_rich <- enricher(gene = gene_select,
                  pAdjustMethod = 'BH',
                  qvalueCutoff = 0.2,
                  maxGSSize = 200)
-#类似的可以做另外两个类型的GO富集
-#出图的话，clusterProfiler的可视化也是非常简单
+
 barplot(go_rich,showCategory = 20,drop=T)
 dev.off()
 write.table(go_rich, 'cang0h.vs.cang24h.go_rich.txt', sep='\t', row.names = FALSE, quote = FALSE)
