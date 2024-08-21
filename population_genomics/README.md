@@ -48,9 +48,9 @@ vcftools --gzvcf $VCF_IN \
 **4. Estimation of sliding-window *F*<sub>ST</sub>**
 
 ```bash
-# filter individuals with missingness above 20%
+# filter individuals with missingness above 25%
 vcftools --gzvcf oyster.filtered.vcf.gz --missing-indv
-sed '1d' out.imiss | awk '{if($5>0.2)print $1}' > lowDP.indv
+sed '1d' out.imiss | awk '{if($5>0.5)print $1}' > lowDP.indv
 vcftools --gzvcf oyster.filtered.vcf.gz --remove lowDP.indv --recode --stdout | gzip -c > filterlowDP.vcf.gz
 # sliding windows of 2kb
 parseVCF.py -i filterlowDP.vcf.gz | bgzip > filterlowDP.geno.gz
