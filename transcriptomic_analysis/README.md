@@ -20,13 +20,30 @@ rm -f ${i}_clean_{1,2}.fastq.gz
 done
 ```
 
-**3. Quantification of reads aligned to genomic features**
+**3. Quantification of reads aligned to genomic features and readcount to FPKM**
 
 ```bash
 for i in `cat sample.list`
 do 
 htseq-count -s no -r pos -f bam hisat2.$i.bam ref.gtf > $i.counts
 done
+```
+
+```R
+# readcount to FPKM
+df <- read.table("allSamples.counts", header=T, row.names=1)
+totalMappedReads <- colSums(df)
+
+geneLengths <- read.table("gene_length.txt",header=F,row.names=1)
+geneLengths <- geneLengths[rownames(df),]
+geneLengthsKb <- geneLengths / 1000
+
+fpkm <- sweep(df, 2, totalMappedReads, "/")
+fpkm <- sweep(fpkm, 1, geneLengthsKb, "/")
+fpkm <- fpkm * 1e6
+
+fpkm[] <- lapply(fpkm, function(x) if(is.numeric(x)) round(x, 2) else x)
+write.table(fpkm, "allSamplesFPKM.txt",quote=F,sep="\t",row.names=T,col.names=T)
 ```
 
 **4. Differential expression analysis**
