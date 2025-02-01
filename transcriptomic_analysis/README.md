@@ -95,10 +95,12 @@ ggboxplot(merged_data, x = "Species", y = "Expression",
   stat_compare_means(comparisons = my_comparisons) + theme(legend.position = "none") + xlab("")
 dev.off()
 ```
-LOC128165822
+**LOC128165822**
+
 <img src="https://github.com/user-attachments/assets/b40e25fa-987e-49ba-8a69-bbaf157518d5" alt="LOC128165822" width="500"/>
-LOC128168260
-![LOC128168260](https://github.com/user-attachments/assets/e5e5338e-6a82-4313-a1ad-1cf2b0f1c77c)
+**LOC128168260**
+
+<img src="https://github.com/user-attachments/assets/e5e5338e-6a82-4313-a1ad-1cf2b0f1c77c" alt="LOC128168260" width="500"/>
 
 **4. Differential expression analysis**
 
