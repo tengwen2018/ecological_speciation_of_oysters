@@ -137,7 +137,7 @@ dev.off()
 ```
 <img src="https://github.com/user-attachments/assets/fe69e21a-3b5e-418b-a9cc-248c9b128762" alt="PCA" width="500"/>
 
-
+<br><br>
 **3. Quantification of reads aligned to genomic features and readcount to FPKM**
 
 ```bash
