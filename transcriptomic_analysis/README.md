@@ -219,11 +219,15 @@ dev.off()
 **SCD1, LOC128165822**
 
 <img src="https://github.com/user-attachments/assets/b40e25fa-987e-49ba-8a69-bbaf157518d5" alt="LOC128165822" width="500"/>
+
 <br><br>
+
 **SCD2, LOC128168260**
 
 <img src="https://github.com/user-attachments/assets/e5e5338e-6a82-4313-a1ad-1cf2b0f1c77c" alt="LOC128168260" width="500"/>
+
 <br><br>
+
 **4. Differential expression analysis**
 
 ```R
