@@ -45,6 +45,60 @@ fpkm <- fpkm * 1e6
 fpkm[] <- lapply(fpkm, function(x) if(is.numeric(x)) round(x, 2) else x)
 write.table(fpkm, "allSamplesFPKM.txt",quote=F,sep="\t",row.names=T,col.names=T)
 ```
+```R
+library(ggpubr)
+
+df <- read.table("allSamplesFPKM.txt", header=T, row.names=1)
+info <- read.table("sample.info", header=T, row.names=1)
+
+# Subset the expression data for LOC128165822
+gene_data <- df["LOC128165822", ]
+
+# Convert gene_data to a data frame and melt it for ggplot2
+library(reshape2)
+gene_data_melted <- melt(gene_data)
+
+# Rename columns for clarity
+colnames(gene_data_melted) <- c("Sample", "Expression")
+rownames(gene_data_melted) <- gene_data_melted$Sample
+
+# Merge with sample information (info) to add species and location
+merged_data <- merge(gene_data_melted, info, by = "row.names", all.x = TRUE)
+
+# Create the boxplot
+my_comparisons <- list( c("C.angulata", "C.gigas"))
+pdf("LOC128165822.pdf", width=4, height=3)
+ggboxplot(merged_data, x = "Species", y = "Expression",
+          color = "black", palette = "jco", add = "jitter", facet.by = "Location")+ 
+  stat_compare_means(comparisons = my_comparisons) + theme(legend.position = "none") + xlab("")
+dev.off()
+
+# Subset the expression data for LOC128168260
+gene_data <- df["LOC128168260", ]
+
+# Convert gene_data to a data frame and melt it for ggplot2
+library(reshape2)
+gene_data_melted <- melt(gene_data)
+
+# Rename columns for clarity
+colnames(gene_data_melted) <- c("Sample", "Expression")
+rownames(gene_data_melted) <- gene_data_melted$Sample
+
+# Merge with sample information (info) to add species and location
+merged_data <- merge(gene_data_melted, info, by = "row.names", all.x = TRUE)
+
+# Create the boxplot
+my_comparisons <- list( c("C.angulata", "C.gigas"))
+pdf("LOC128168260.pdf", width=4, height=3)
+ggboxplot(merged_data, x = "Species", y = "Expression",
+          color = "black", palette = "jco", add = "jitter", facet.by = "Location")+ 
+  stat_compare_means(comparisons = my_comparisons) + theme(legend.position = "none") + xlab("")
+dev.off()
+```
+LOC128165822
+![LOC128165822](https://github.com/user-attachments/assets/b40e25fa-987e-49ba-8a69-bbaf157518d5)
+LOC128168260
+![LOC128168260](https://github.com/user-attachments/assets/e5e5338e-6a82-4313-a1ad-1cf2b0f1c77c)
 
 **4. Differential expression analysis**
 
