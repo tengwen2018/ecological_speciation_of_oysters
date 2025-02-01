@@ -211,20 +211,20 @@ merged_data <- merge(gene_data_melted, info, by = "row.names", all.x = TRUE)
 # Create the boxplot
 my_comparisons <- list( c("C.angulata", "C.gigas"))
 pdf("LOC128168260.pdf", width=4, height=3)
-ggboxplot(merged_data, x = "Species", y = "Expression",
+ggboxplot(merged_data, x = "Species", y = "FPKM",
           color = "black", palette = "jco", add = "jitter", facet.by = "Location")+ 
   stat_compare_means(comparisons = my_comparisons) + theme(legend.position = "none") + xlab("")
 dev.off()
 ```
 **SCD1, LOC128165822**
 
-<img src="https://github.com/user-attachments/assets/b40e25fa-987e-49ba-8a69-bbaf157518d5" alt="LOC128165822" width="500"/>
+<img src="https://github.com/user-attachments/assets/cb877917-2b88-4a5e-94ff-2554a851e31a" alt="LOC128165822" width="500"/>
 
 <br><br>
 
 **SCD2, LOC128168260**
 
-<img src="https://github.com/user-attachments/assets/e5e5338e-6a82-4313-a1ad-1cf2b0f1c77c" alt="LOC128168260" width="500"/>
+<img src="https://github.com/user-attachments/assets/043eed67-cfa0-4d3d-b03a-21f3f3f15d8f" alt="LOC128168260" width="500"/>
 
 <br><br>
 
