@@ -20,6 +20,124 @@ rm -f ${i}_clean_{1,2}.fastq.gz
 done
 ```
 
+**Validation of the sample information**
+
+```bash
+for i in `cut -f 1 ../sample.info`
+do 
+ln -s ../hisat2/$i/hisat2.$i.bam* ./
+done
+
+# snp calling
+for e in `cat chr.list`
+do
+echo REF=/public1/ref/c.gigas/roslin/ref/ref.fa > variantcalling.$e.sh
+echo bcftools mpileup --threads 6 -r $e -a AD,DP,SP -Ou -f \$REF \*.bam \| bcftools call --threads 6 -f GQ,GP -mO z -o $e.vcf.gz >> variantcalling.$e.sh
+nohup time sh variantcalling.$e.sh > variantcalling.$e.log 2>&1&
+done
+
+# filter
+for e in `cat chr.list`
+do
+echo VCF_IN=$e.vcf.gz > filter.$e.sh
+echo VCF_OUT=$e.filtered.vcf.gz >> filter.$e.sh
+echo MAF=0.1 >> filter.$e.sh
+echo MISS=0.9 >> filter.$e.sh
+echo QUAL=30 >> filter.$e.sh
+echo MIN_DEPTH=10 >> filter.$e.sh
+echo MAX_DEPTH=50 >> filter.$e.sh
+echo # perform the filtering with vcftools >> filter.$e.sh
+echo vcftools --gzvcf \$VCF_IN \\ >> filter.$e.sh
+echo --remove-indels --maf \$MAF --max-missing \$MISS --minQ \$QUAL \\ >> filter.$e.sh
+echo --min-meanDP \$MIN_DEPTH --max-meanDP \$MAX_DEPTH \\ >> filter.$e.sh
+echo --minDP \$MIN_DEPTH --maxDP \$MAX_DEPTH --recode --stdout \| gzip -c \> \\ >> filter.$e.sh
+echo \$VCF_OUT >> filter.$e.sh
+nohup time sh filter.$e.sh > filter.$e.log 2>&1&
+done
+
+# merge 
+bcftools concat -O z -o filtered.vcf.gz NC_04*.filtered.vcf.gz
+
+# filter lowDP
+vcftools --gzvcf filtered.vcf.gz --missing-indv > indv.miss
+
+awk '{if($5>0.2)print $1}' out.imiss > lowDP.indv
+
+vcftools --gzvcf filtered.vcf.gz --remove lowDP.indv --recode --stdout | gzip -c > filterlowDP.vcf.gz
+
+# perform linkage pruning - i.e. identify prune sites
+time plink --vcf filterlowDP.vcf.gz --double-id --allow-extra-chr \
+--set-missing-var-ids @:# \
+--indep-pairwise 50 10 0.1 --out cg.vs.ca
+# PCA output:
+#	•	cichlids.eigenval - the eigenvalues from our analysis
+#	•	cichlids.eigenvec- the eigenvectors from our analysis
+# plink binary output
+#	•	cichlids.bed - the cichlids bed file - this is a binary file necessary for admixture analysis. It is essentially the genotypes of the pruned dataset recoded as 1s and 0s.
+#	•	cichlids.bim - a map file (i.e. information file) of the variants contained in the bed file.
+#	•	cichlids.fam - a map file for the individuals contained in the bed file.
+
+# prune and create pca
+time plink --vcf filterlowDP.vcf.gz --double-id --allow-extra-chr --set-missing-var-ids @:# \
+--extract cg.vs.ca.prune.in \
+--threads 10 \
+--make-bed --pca --out cg.vs.ca
+
+for i in `awk '{print $1":"$3}' ../sample.info`; do
+sed -i "s/hisat2.${i%%:*}.bam/${i##*:}/g" cg.vs.ca.eigenvec
+done
+```
+```R
+# load tidyverse package
+library(tidyverse)
+# read in data
+pca <- read.table("./cg.vs.ca.eigenvec", header = FALSE, sep=" ")
+eigenval <- scan("./cg.vs.ca.eigenval")
+# sort out the pca data
+# remove nuisance column
+pca <- pca[,-1]
+# set names
+names(pca)[1] <- "ind"
+names(pca)[2:ncol(pca)] <- paste0("PC", 1:(ncol(pca)-1))
+# location
+loc <- rep(NA, length(pca$ind))
+loc[grep("QD_AN", pca$ind)] <- "cang_n"
+loc[grep("QD_QD", pca$ind)] <- "cgig_n"
+loc[grep("XM_AN", pca$ind)] <- "cang_s"
+loc[grep("XM_QD", pca$ind)] <- "cgig_s"
+# species
+spe <- rep(NA, length(pca$ind))
+spe[grep("QD_AN", pca$ind)] <- "cang"
+spe[grep("QD_QD", pca$ind)] <- "cgig"
+spe[grep("XM_AN", pca$ind)] <- "cang"
+spe[grep("XM_QD", pca$ind)] <- "cgig"
+# remake data.frame
+pca <- as_tibble(data.frame(pca, loc))
+# first convert to percentage variance explained
+pve <- data.frame(PC = 1:20, pve = eigenval/sum(eigenval)*100)
+
+library(ggrepel)
+
+pdf("pca.pdf",width=4,height=3)
+
+ggplot(pca, aes(x=PC1, y=PC2, label=ind, shape=spe, color=loc)) +
+    geom_point(size = 2) +
+#    geom_text_repel(aes(label =ind),size = 2.5) +
+    geom_vline(xintercept = 0, linetype="dashed") +
+    geom_hline(yintercept = 0, linetype="dashed") +
+    xlab(paste("PC1 (",round(pve[1,2],2),"%)",sep="")) + 
+    ylab(paste("PC2 (",round(pve[2,2],2),"%)",sep="")) +
+    scale_color_brewer(palette="Dark2") + 
+    scale_shape_manual(values = c(15, 16)) +
+    theme_minimal() + 
+    stat_ellipse()
+
+dev.off()
+
+```
+<img src="https://github.com/user-attachments/assets/fe69e21a-3b5e-418b-a9cc-248c9b128762" alt="PCA" width="500"/>
+
+
 **3. Quantification of reads aligned to genomic features and readcount to FPKM**
 
 ```bash
@@ -28,6 +146,9 @@ do
 htseq-count -s no -r pos -f bam hisat2.$i.bam ref.gtf > $i.counts
 done
 ```
+
+
+**Box plot of gene expression level**
 
 ```R
 # readcount to FPKM
