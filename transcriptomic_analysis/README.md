@@ -96,9 +96,9 @@ ggboxplot(merged_data, x = "Species", y = "Expression",
 dev.off()
 ```
 LOC128165822
-![LOC128165822](https://github.com/user-attachments/assets/b40e25fa-987e-49ba-8a69-bbaf157518d5 | width=100)
+![LOC128165822](https://github.com/user-attachments/assets/b40e25fa-987e-49ba-8a69-bbaf157518d5 =250x250)
 LOC128168260
-![LOC128168260](https://github.com/user-attachments/assets/e5e5338e-6a82-4313-a1ad-1cf2b0f1c77c | width=100)
+![LOC128168260](https://github.com/user-attachments/assets/e5e5338e-6a82-4313-a1ad-1cf2b0f1c77c =250x250)
 
 **4. Differential expression analysis**
 
