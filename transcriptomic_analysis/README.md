@@ -171,49 +171,32 @@ library(ggpubr)
 
 df <- read.table("allSamplesFPKM.txt", header=T, row.names=1)
 info <- read.table("sample.info", header=T, row.names=1)
+info <- info[grep("_0_", info$Name), ]
+info$Sample <- rownames(info)
 
 # Subset the expression data for LOC128165822
-gene_data <- df["LOC128165822", ]
+gene_data <- df[c("LOC128165822", "LOC128168260"), ]
+gene_data$gene <- c("LOC128165822", "LOC128168260")
 
 # Convert gene_data to a data frame and melt it for ggplot2
 library(reshape2)
-gene_data_melted <- melt(gene_data)
+gene_data_melted <- melt(gene_data, varnames = c("gene"), value.name = "Expression")
+gene_data_melted <- gene_data_melted[gene_data_melted$variable %in% rownames(info), ]
 
 # Rename columns for clarity
-colnames(gene_data_melted) <- c("Sample", "Expression")
-rownames(gene_data_melted) <- gene_data_melted$Sample
+colnames(gene_data_melted) <- c("Gene", "Sample", "Expression")
 
 # Merge with sample information (info) to add species and location
-merged_data <- merge(gene_data_melted, info, by = "row.names", all.x = TRUE)
+merged_data <- merge(gene_data_melted, info, by = "Sample", all.x = TRUE)
 
 # Create the boxplot
-my_comparisons <- list( c("C.angulata", "C.gigas"))
+#my_comparisons <- list( c("C.angulata", "C.gigas"))
 pdf("LOC128165822.pdf", width=4, height=3)
 ggboxplot(merged_data, x = "Species", y = "Expression",
-          color = "black", palette = "jco", add = "jitter", facet.by = "Location")+ 
-  stat_compare_means(comparisons = my_comparisons) + theme(legend.position = "none") + xlab("")
-dev.off()
-
-# Subset the expression data for LOC128168260
-gene_data <- df["LOC128168260", ]
-
-# Convert gene_data to a data frame and melt it for ggplot2
-library(reshape2)
-gene_data_melted <- melt(gene_data)
-
-# Rename columns for clarity
-colnames(gene_data_melted) <- c("Sample", "Expression")
-rownames(gene_data_melted) <- gene_data_melted$Sample
-
-# Merge with sample information (info) to add species and location
-merged_data <- merge(gene_data_melted, info, by = "row.names", all.x = TRUE)
-
-# Create the boxplot
-my_comparisons <- list( c("C.angulata", "C.gigas"))
-pdf("LOC128168260.pdf", width=4, height=3)
-ggboxplot(merged_data, x = "Species", y = "FPKM",
-          color = "black", palette = "jco", add = "jitter", facet.by = "Location")+ 
-  stat_compare_means(comparisons = my_comparisons) + theme(legend.position = "none") + xlab("")
+          color = "black", palette = "jco", add = "jitter", facet.by = c("Gene", "Location")) + 
+#  stat_compare_means(comparisons = my_comparisons) +
+  theme(legend.position = "none") +
+  xlab("")
 dev.off()
 ```
 **SCD1, LOC128165822**
