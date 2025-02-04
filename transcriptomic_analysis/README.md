@@ -209,6 +209,65 @@ dev.off()
 <img src="https://github.com/user-attachments/assets/043eed67-cfa0-4d3d-b03a-21f3f3f15d8f" alt="LOC128168260" width="500"/>
 <br><br>
 
+
+```R
+library(ggpubr)
+
+df <- read.table("allSamplesFPKM.txt", header=T, row.names=1)
+info <- read.table("sample.info", header=T, row.names=1)
+info$Sample <- rownames(info)
+
+# Subset the expression data for LOC128165822
+gene_data <- df["LOC128165822", ]
+gene_data$gene <- c("LOC128165822")
+
+# Convert gene_data to a data frame and melt it for ggplot2
+library(reshape2)
+gene_data_melted <- melt(gene_data, varnames = c("gene"), value.name = "Expression")
+
+# Rename columns for clarity
+colnames(gene_data_melted) <- c("Gene", "Sample", "Expression")
+
+# Merge with sample information (info) to add species and location
+merged_data <- merge(gene_data_melted, info, by = "Sample", all.x = TRUE)
+
+# Create the boxplot
+my_comparisons <- list( c("0h", "24h"))
+pdf("LOC128165822_heat.pdf", width=4, height=4)
+ggboxplot(merged_data, x = "Treat", y = "Expression",
+          color = "black", palette = "jco", add = "jitter", facet.by = c("Species", "Location")) + 
+  stat_compare_means(comparisons = my_comparisons) +
+  theme(legend.position = "none") +
+  xlab("")
+dev.off()
+
+
+# Subset the expression data for LOC128168260
+gene_data <- df["LOC128168260", ]
+gene_data$gene <- c("LOC128168260")
+
+# Convert gene_data to a data frame and melt it for ggplot2
+library(reshape2)
+gene_data_melted <- melt(gene_data, varnames = c("gene"), value.name = "Expression")
+
+# Rename columns for clarity
+colnames(gene_data_melted) <- c("Gene", "Sample", "Expression")
+
+# Merge with sample information (info) to add species and location
+merged_data <- merge(gene_data_melted, info, by = "Sample", all.x = TRUE)
+
+# Create the boxplot
+my_comparisons <- list( c("0h", "24h"))
+pdf("LOC128168260_heat.pdf", width=4, height=4)
+ggboxplot(merged_data, x = "Treat", y = "Expression",
+          color = "black", palette = "jco", add = "jitter", facet.by = c("Species", "Location")) + 
+  stat_compare_means(comparisons = my_comparisons) +
+  theme(legend.position = "none") +
+  xlab("")
+dev.off()
+```
+
+
 **4. Differential expression analysis**
 
 ```R
