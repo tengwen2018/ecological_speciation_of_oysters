@@ -164,7 +164,7 @@ fpkm[] <- lapply(fpkm, function(x) if(is.numeric(x)) round(x, 2) else x)
 write.table(fpkm, "allSamplesFPKM.txt",quote=F,sep="\t",row.names=T,col.names=T)
 ```
 
-**Box plot of gene expression level**
+**Box plot of gene expression level (FPKM)**
 
 ```R
 library(ggpubr)
