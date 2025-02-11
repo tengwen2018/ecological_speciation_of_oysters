@@ -147,9 +147,6 @@ htseq-count -s no -r pos -f bam hisat2.$i.bam ref.gtf > $i.counts
 done
 ```
 
-
-**Box plot of gene expression level**
-
 ```R
 # readcount to FPKM
 df <- read.table("allSamples.counts", header=T, row.names=1)
@@ -166,6 +163,9 @@ fpkm <- fpkm * 1e6
 fpkm[] <- lapply(fpkm, function(x) if(is.numeric(x)) round(x, 2) else x)
 write.table(fpkm, "allSamplesFPKM.txt",quote=F,sep="\t",row.names=T,col.names=T)
 ```
+
+**Box plot of gene expression level**
+
 ```R
 library(ggpubr)
 
