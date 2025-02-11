@@ -266,6 +266,13 @@ ggboxplot(merged_data, x = "Treat", y = "Expression",
   xlab("")
 dev.off()
 ```
+**SCD1, LOC128165822**
+
+<img src="https://github.com/user-attachments/assets/72f50cb9-0ab6-4fed-a628-b191223642ef" alt="LOC128165822" width="500"/>
+
+**SCD1, LOC128168260**
+
+<img src="https://github.com/user-attachments/assets/374e72c7-0d0e-4280-9a84-6617c1517dc8" alt="LOC128165822" width="500"/>
 
 
 **4. Differential expression analysis**
